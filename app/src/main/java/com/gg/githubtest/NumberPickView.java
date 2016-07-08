@@ -6,28 +6,29 @@ import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
-/**
+/*
  * Created by GG on 2016/7/1.
  */
 public class NumberPickView implements NumberPicker.OnValueChangeListener, NumberPicker.OnScrollListener,
         NumberPicker.Formatter {
 
+    private int fromMinValue;
+    private int fromMaxValue;
+    private int toMinValue;
+    private int toMaxValue;
     //下面的curriculumNPFrom和curriculumNPTo只要变成static那么就变成了有记忆效果的curriculumNumber
-    private TextView textView;
-    private static int curriculumNPFrom = 6;
-    private static int curriculumNPTo   = 6;
+    private int curriculumNPFrom = fromMaxValue / 2;
+    private int curriculumNPTo   = toMaxValue / 2;
     private Context context;
 
-    public NumberPickView(Context context, TextView textView) {
-        this.textView = textView;
+
+    public NumberPickView(Context context) {
         this.context = context;
-        init();
+
     }
 
 
-    //初始化NumberPick
     public void init() {
-        //AlertDialog布局
         final AlertDialog dialog = new AlertDialog.Builder(context).create();
         View view = View.inflate(context, R.layout.curriculum_number_pick, null);
         dialog.show();
@@ -36,9 +37,9 @@ public class NumberPickView implements NumberPicker.OnValueChangeListener, Numbe
         NumberPicker npFrom = (NumberPicker) view.findViewById(R.id.np_from);
         NumberPicker npTo = (NumberPicker) view.findViewById(R.id.np_to);
         if (npFrom != null) {
-            npFrom.setMaxValue(12);
+            npFrom.setMinValue(fromMinValue);
+            npFrom.setMaxValue(fromMaxValue);
             npFrom.setValue(curriculumNPFrom);
-            npFrom.setMinValue(1);
             npFrom.setFormatter(this);
             npFrom.setOnValueChangedListener(this);
             npFrom.setOnScrollListener(this);
@@ -46,9 +47,9 @@ public class NumberPickView implements NumberPicker.OnValueChangeListener, Numbe
             npFrom.setWrapSelectorWheel(false);
         }
         if (npTo != null) {
-            npTo.setMaxValue(12);
+            npTo.setMinValue(toMinValue);
+            npTo.setMaxValue(toMaxValue);
             npTo.setValue(curriculumNPTo);
-            npTo.setMinValue(1);
             npTo.setFormatter(this);
             npTo.setOnValueChangedListener(this);
             npTo.setOnScrollListener(this);
@@ -63,11 +64,7 @@ public class NumberPickView implements NumberPicker.OnValueChangeListener, Numbe
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //  System.out.println("从:" + curriculumNPFrom + "到:" + curriculumNPTo);
-                //调用接口
-                textView.setText(curriculumNPFrom + "-" + curriculumNPTo);
-                //不使用接口的时候一直没有数据返回式因为一旦cancel了那么数据就会失效了，所以你再使用getCurriculumNPFrom返回总是6
+                onNumberChangeListener.onNumberPicked(curriculumNPFrom, curriculumNPTo);
                 dialog.cancel();
             }
         });
@@ -79,15 +76,31 @@ public class NumberPickView implements NumberPicker.OnValueChangeListener, Numbe
         });
     }
 
-    OnNumberChangeListener onNumberChangeListener;
+    public void SetMinFromValue(int value) {
+        fromMinValue = value;
+    }
 
-    public void setOnNumberPickListener(OnNumberChangeListener onNumberChangeListener) {
-        this.onNumberChangeListener = onNumberChangeListener;
-        onNumberChangeListener.onNumberPicked(curriculumNPFrom, curriculumNPTo);
+    public void SetMaxFromValue(int value) {
+        fromMaxValue = value;
+    }
+
+    public void SetMinToValue(int value) {
+        toMinValue = value;
+    }
+
+    public void SetMaxToValue(int value) {
+        toMaxValue = value;
+        init();
     }
 
     public interface OnNumberChangeListener {
         void onNumberPicked(int from, int to);
+    }
+
+    OnNumberChangeListener onNumberChangeListener;
+
+    public void setOnNumberPickListener(OnNumberChangeListener onNumberChangeListener) {
+        this.onNumberChangeListener = onNumberChangeListener;
     }
 
 
@@ -95,13 +108,10 @@ public class NumberPickView implements NumberPicker.OnValueChangeListener, Numbe
     public void onScrollStateChange(NumberPicker view, int scrollState) {
         switch (scrollState) {
             case SCROLL_STATE_FLING:
-                //  System.out.println("后续滑动");
                 break;
             case SCROLL_STATE_IDLE:
-                //  System.out.println("停止状态");
                 break;
             case SCROLL_STATE_TOUCH_SCROLL:
-                //  System.out.println("滑动中");
                 break;
         }
     }
