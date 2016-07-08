@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
                     numberPickView.SetMaxFromValue(8);
                     numberPickView.SetMinToValue(0);
                     numberPickView.SetMaxToValue(10);
-
                     numberPickView.setOnNumberPickListener(new NumberPickView.OnNumberChangeListener() {
                         @Override
                         public void onNumberPicked(int from, int to) {

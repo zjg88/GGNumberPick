@@ -21,12 +21,10 @@ public class NumberPickView implements NumberPicker.OnValueChangeListener, Numbe
     private int curriculumNPTo   = toMaxValue / 2;
     private Context context;
 
-
     public NumberPickView(Context context) {
         this.context = context;
 
     }
-
 
     public void init() {
         final AlertDialog dialog = new AlertDialog.Builder(context).create();
